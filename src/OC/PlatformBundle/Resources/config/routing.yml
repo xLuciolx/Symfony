@@ -8,6 +8,15 @@
 #     path:     /bye-world
 #     defaults: { _controller:OCPlatformBundle:Advert:bye}
 
+# oc_platform_view_slug:
+#     path:            /platform/{year}/{slug}.{_format}
+#     defaults:
+#         _controller: OCPlatformBundle:Advert:viewSlug
+#         format:      html
+#     requirements:
+#         year:        \d{4}
+#         format:      html|xml
+
 oc_platform_home:
     path:            /{page}
     defaults:
@@ -24,14 +33,6 @@ oc_platform_view:
     requirements:
         id:          \d+
 
-# oc_platform_view_slug:
-#     path:            /platform/{year}/{slug}.{_format}
-#     defaults:
-#         _controller: OCPlatformBundle:Advert:viewSlug
-#         format:      html
-#     requirements:
-#         year:        \d{4}
-#         format:      html|xml
 
 oc_platform_add:
     path:            /add
