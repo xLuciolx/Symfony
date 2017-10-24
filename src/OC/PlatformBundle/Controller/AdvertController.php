@@ -4,6 +4,7 @@
 
 namespace OC\PlatformBundle\Controller;
 
+use OC\PlatformBundle\Entity\Advert;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -43,13 +44,18 @@ class AdvertController extends Controller
 
     public function viewAction($id)
     {
-        $advert = array(
-            'title'   => 'Recherche développeur Symfony',
-            'id'      => $id,
-            'author'  => 'Loïc',
-            'content' => 'Nous cherchons un développeur Symfony débutant sur Lyon. Etc...',
-            'date'    => new \Datetime()
-        );
+        //Get the repository
+        $repository = $this->getDoctrine()
+                            ->getManager()
+                            ->getRepository('OCPlatformBundle:Advert');
+
+        //Get the Entity matching the id
+        $advert = $repository->find($id);
+
+        //Check if the Entity exist
+        if ($advert === null) {
+            throw new NotFoundHttpException('L\'annonce d\'id ' .$id . ' n\'existe pas');
+        }
         return $this->render(
             'OCPlatformBundle:Advert:view.html.twig',
             array(
@@ -61,16 +67,31 @@ class AdvertController extends Controller
 
     public function addAction(Request $request)
     {
+        // Create Entity
+        $advert = new Advert();
+        $advert->setTitle('Recherche développeur Symfony.');
+        $advert->setAuthor('Loïc');
+        $advert->setContent('Nous cherchons un développeur Symfony débutant sur Lyon. Etc...');
+
+        // Get the EntityManager
+        $em = $this->getDoctrine()->getManager();
+
+        # Step 1: persist the Entity
+        $em->persist($advert);
+
+        ## Step 2: flush
+        $em->flush();
+
         // If method POST
         if ($request->isMethod('POST')) {
             $request->getSession()
                     ->getFlashBag()
                     ->add('notice', 'Annonce enregistrée.');
             // redirect to the advert view
-            return $this->redirectToRoute('oc_platform_view', ['id' => 5]);
+            return $this->redirectToRoute('oc_platform_view', ['id' => $advert->getId()]);
         }
         // Display form
-        return $this->render('OCPlatformBundle:Advert:add.html.twig');
+        return $this->render('OCPlatformBundle:Advert:add.html.twig', array('advert' => $advert));
 
     }
 
