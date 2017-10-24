@@ -5,7 +5,8 @@
     "autoload": {
         "psr-4": {
             "AppBundle\\": "src/AppBundle",
-            "OC\\PlatformBundle\\": "src/OC/PlatformBundle"
+            "OC\\PlatformBundle\\": "src/OC/PlatformBundle",
+            "CoreBundle\\": "src/CoreBundle"
 
         },
         "classmap": [
@@ -24,6 +25,7 @@
     "require": {
         "php": ">=5.5.9",
         "doctrine/doctrine-bundle": "^1.6",
+        "doctrine/doctrine-fixtures-bundle": "^2.4",
         "doctrine/orm": "^2.5",
         "incenteev/composer-parameter-handler": "^2.0",
         "sensio/distribution-bundle": "^5.0.19",

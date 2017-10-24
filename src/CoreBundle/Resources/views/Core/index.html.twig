@@ -1,0 +1,23 @@
+{% extends 'CoreBundle::layout.html.twig' %}
+
+{% block title %}Accueil - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">
+        Bienvenue sur OCPlateforme
+    </h1>
+    <p class="text-center">
+        La première plateforme d'annonces dédiées au développement informatique.
+    </p>
+
+    {% for notice in app.session.flashbag.get('notice') %}
+        <div class="alert alert-info">
+            <p class="text-center">Message flash: {{ notice }}</p>
+        </div>
+    {% endfor %}
+
+    <h3>Les dernières annonces publiées:</h3>
+    {{ render(controller('OCPlatformBundle:Advert:menu', { limit:3 })) }}
+
+
+{% endblock %}

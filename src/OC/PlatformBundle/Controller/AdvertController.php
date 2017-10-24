@@ -87,9 +87,13 @@ class AdvertController extends Controller
         return $this->render('OCPlatformBundle:Advert:edit.html.twig', ['advert' => $advert]);
     }
 
-    public function deleteAction($id)
+    public function deleteAction($id, Request $request)
     {
-        return $this->render('OCPlatformBundle:Advert:delete.html.twig');
+        $request->getSession()
+                ->getFlashBag()
+                ->add('notice', 'L\'annonce n° ' . $id . ' a été supprimée');
+        return $this->redirectToRoute('core_homepage');
+        // return $this->render('OCPlatformBundle:Advert:delete.html.twig');
     }
 
     public function menuAction($limit)
