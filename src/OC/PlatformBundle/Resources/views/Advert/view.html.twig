@@ -5,12 +5,51 @@
 {% endblock %}
 
 {% block ocplatform_body %}
-    <h2>{{ advert.title }}</h2>
-    <i>Par {{ advert.author }}, le {{ advert.date | date('d/m/Y') }}</i>
+    <div class="row">
+        <div class="col-md-4">
+            {% if advert.image is not null %}
+            <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}" class="img img-responsive">
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <h2>{{ advert.title }}</h2>
+            <i>Par {{ advert.author }}, le {{ advert.date | date('d/m/Y') }}</i>
+        </div>
+    </div>
 
     <div class="well">
         {{ advert.content }}
     </div>
+    {% if skills | length > 0 %}
+        <div>
+            Cette annonce requière les compétences suivantes:
+            <ul>
+                {% for skill in skills %}
+                    <li>
+                        {{ skill.skill.name }} : niveau {{ skill.level }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    {% if not advert.categories.empty %}
+        <p>
+            Cette annonce est parue dans les catégories suivantes:
+            {% for category in advert.categories %}
+                <span class="label label-info">{{ category.name }}</span>
+                {% if not loop.last %},
+                {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+    <h4>Candidatures en cours:</h4>
+    <ul>
+        {% for application in applications %}
+            <li>
+                <p>{{ application.author }} : {{ application.content }}</p>
+            </li>
+        {% endfor %}
+    </ul>
 
     <p>
         <a href="{{path('oc_platform_home')}}" class="btn btn-default"><i class="glyphicon glyphicon-chevron-left"></i> Retour à la liste</a>
