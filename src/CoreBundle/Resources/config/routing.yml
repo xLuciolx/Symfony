@@ -1,7 +1,14 @@
 core_homepage:
     path:     /
-    defaults: { _controller: CoreBundle:Core:index }
+    defaults:
+        _controller: CoreBundle:Core:index
 
 core_contact:
     path:     /contact
-    defaults: {_controller:CoreBundle:Core:contact}
+    defaults:
+        _controller: CoreBundle:Core:contact
+
+core_test:
+    path: /test/{id}
+    defaults:
+        _controller: CoreBundle:Core:test

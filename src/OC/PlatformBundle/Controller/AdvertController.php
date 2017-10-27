@@ -45,7 +45,7 @@ class AdvertController extends Controller
         return $this->render('OCPlatformBundle:Advert:index.html.twig', ['listAdverts' => $listAdverts]);
     }
 
-    public function viewAction($id)
+    public function viewAction($id, $slug)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -68,7 +68,7 @@ class AdvertController extends Controller
             array(
                 'advert'       => $advert,
                 'applications' => $listApplication,
-                'skills'       => $listAdvertSkills
+                'skills'       => $listAdvertSkills,
             )
         );
     }
@@ -84,6 +84,7 @@ class AdvertController extends Controller
         $advert->setTitle('Recherche développeur Symfony.');
         $advert->setAuthor('Loïc');
         $advert->setContent('Nous cherchons un développeur Symfony débutant sur Lyon. Etc...');
+        $advert->setEmail('lgallay@orange.fr');
 
         // Create Image Entity
         $image = new Image();
@@ -197,20 +198,23 @@ class AdvertController extends Controller
 
     public function menuAction($limit)
     {
-        $listAdverts = array(
-            array(
-                'id'    => 2,
-                'title' => 'Recherche développeur Symfony'
-            ),
-            array(
-                'id'    => 5,
-                'title' => 'Mission de webmaster'
-            ),
-            array(
-                'id'    => 9,
-                'title' => 'Offre de stage webdesigner'
-            )
-        );
+        $em = $this->getDoctrine()->getManager();
+        $listAdverts = $em->getRepository('OCPlatformBundle:Advert')
+                            ->findAll();
+        // $listAdverts = array(
+        //     array(
+        //         'id'    => 2,
+        //         'title' => 'Recherche développeur Symfony'
+        //     ),
+        //     array(
+        //         'id'    => 5,
+        //         'title' => 'Mission de webmaster'
+        //     ),
+        //     array(
+        //         'id'    => 9,
+        //         'title' => 'Offre de stage webdesigner'
+        //     )
+        // );
 
         return $this->render('OCPlatformBundle:Advert:menu.html.twig', ['listAdverts' => $listAdverts]);
     }

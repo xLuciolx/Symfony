@@ -27,7 +27,7 @@ oc_platform_home:
 
 
 oc_platform_view:
-    path:            /advert/{id}
+    path:            /advert/{id}/{slug}
     defaults:
         _controller: OCPlatformBundle:Advert:view
     requirements:
