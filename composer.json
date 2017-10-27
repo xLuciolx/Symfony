@@ -1,5 +1,6 @@
 {
     "name": "luciol/symfony",
+    "description": "prise en main du framework symfony",
     "license": "proprietary",
     "type": "project",
     "autoload": {

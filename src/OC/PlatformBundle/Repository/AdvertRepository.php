@@ -1,7 +1,8 @@
 <?php
 
 namespace OC\PlatformBundle\Repository;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+// use Doctrine\ORM\QueryBuilder;
 
 /**
  * AdvertRepository
@@ -11,78 +12,98 @@ use Doctrine\ORM\QueryBuilder;
  */
 class AdvertRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function myFindAll()
+    // public function myFindAll()
+    // {
+    //     // First method: through the EntityManager
+    //     $queryBuilder = $this->_em->createQueryBuilder()
+    //                                 ->select('a')
+    //                                 ->from($this->_entityName, 'a');
+    //     // In a repository, $this->_entityName is the Entity namespace
+    //     // Here it's: OC\PlatformBundle\Entity\Advert
+    //
+    //     // Second method: shortcut (recommended)
+    //     $queryBuilder = $this->createQueryBuilder('a');
+    //     // Get query from queryBuilder
+    //     $query = $queryBuilder->getQuery();
+    //     // Get results from the query
+    //     $results = $query->getResult();
+    //
+    //     return $results;
+    // }
+    //
+    // public function myFindOne($id)
+    // {
+    //     $qb = $this->createQueryBuilder('a');
+    //
+    //     $qb->where('a:id = :id')
+    //         ->setParameter('id', $id);
+    //
+    //     return $qb->getQuery()
+    //               ->getResult();
+    // }
+    //
+    // public function findByAuthorAndDate($author, $year)
+    // {
+    //     $qb = $this->createQueryBuilder('a');
+    //
+    //     $qb->where('a:author = :author')
+    //         ->setParameter('author', $author)
+    //         ->andWhere('a:date < :year')
+    //         ->setParameter('year', $year)
+    //         ->orderBy('a.date', 'DESC');
+    //
+    //     return $qb->getQuery()
+    //                 ->getResult();
+    // }
+    //
+    // public function whereCurrentYear(QueryBuilder $qb)
+    // {
+    //     $qb->andWhere('a:date BETWEEN :start AND :end')
+    //         ->setParameter('start', new \DateTime(date('Y').'-01-01'))
+    //         ->setParameter('end', new \DateTime(date('Y').'-12-31'));
+    // }
+    //
+    // public function getAdvertWithApplications()
+    // {
+    //     $qb = $this->createQueryBuilder('a')
+    //                 ->leftJoin('a.applications', 'app')
+    //                 ->addSelect('app');
+    //
+    //     return $qb->getQuery()
+    //                 ->getResult();
+    // }
+    //
+    // public function getAdvertWithCategories(array $categoryNames)
+    // {
+    //     $qb = $this->createQueryBuilder('a')
+    //                 // Join with the Entity Category with alias c
+    //                 ->innerJoin('a.categories', 'c')
+    //                 ->addSelect('c');
+    //     // Filter the category name with 'IN' (see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/query-builder.html#low-level-api)
+    //     $qb->where($qb->expr()->in('c.name', $categoryNames));
+    //
+    //     // Return results
+    //     return $qb->getQuery()
+    //                 ->getResult();
+    // }
+
+    public function getAdverts($page, $nbPerPage)
     {
-        // First method: through the EntityManager
-        $queryBuilder = $this->_em->createQueryBuilder()
-                                    ->select('a')
-                                    ->from($this->_entityName, 'a');
-        // In a repository, $this->_entityName is the Entity namespace
-        // Here it's: OC\PlatformBundle\Entity\Advert
+        $query = $this->createQueryBuilder('a')
+                        // get image
+                        ->leftJoin('a.image', 'i')
+                        ->addSelect('i')
+                        // get categories
+                        ->leftJoin('a.categories', 'c')
+                        ->addSelect('c')
+                        ->leftJoin('a.advertskills', 'ask')
+                        ->addSelect('ask')
+                        ->orderBy('a.date', 'DESC')
+                        ->getQuery();
 
-        // Second method: shortcut (recommended)
-        $queryBuilder = $this->createQueryBuilder('a');
-        // Get query from queryBuilder
-        $query = $queryBuilder->getQuery();
-        // Get results from the query
-        $results = $query->getResult();
+        $query->setFirstResult(($page-1)*$nbPerPage)
+                ->setMaxResults($nbPerPage);
 
-        return $results;
-    }
-
-    public function myFindOne($id)
-    {
-        $qb = $this->createQueryBuilder('a');
-
-        $qb->where('a:id = :id')
-            ->setParameter('id', $id);
-
-        return $qb->getQuery()
-                  ->getResult();
-    }
-
-    public function findByAuthorAndDate($author, $year)
-    {
-        $qb = $this->createQueryBuilder('a');
-
-        $qb->where('a:author = :author')
-            ->setParameter('author', $author)
-            ->andWhere('a:date < :year')
-            ->setParameter('year', $year)
-            ->orderBy('a.date', 'DESC');
-
-        return $qb->getQuery()
-                    ->getResult();
-    }
-
-    public function whereCurrentYear(QueryBuilder $qb)
-    {
-        $qb->andWhere('a:date BETWEEN :start AND :end')
-            ->setParameter('start', new \DateTime(date('Y').'-01-01'))
-            ->setParameter('end', new \DateTime(date('Y').'-12-31'));
-    }
-
-    public function getAdvertWithApplications()
-    {
-        $qb = $this->createQueryBuilder('a')
-                    ->leftJoin('a.applications', 'app')
-                    ->addSelect('app');
-
-        return $qb->getQuery()
-                    ->getResult();
-    }
-
-    public function getAdvertWithCategories(array $categoryNames)
-    {
-        $qb = $this->createQueryBuilder('a')
-                    // Join with the Entity Category with alias c
-                    ->innerJoin('a.categories', 'c')
-                    ->addSelect('c');
-        // Filter the category name with 'IN' (see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/query-builder.html#low-level-api)
-        $qb->where($qb->expr()->in('c.name', $categoryNames));
-
-        // Return results
-        return $qb->getQuery()
-                    ->getResult();
+        return new Paginator($query, true);
     }
 }

@@ -102,11 +102,18 @@ class Advert
      */
     private $email;
 
+    /**
+     * @var AdvertSkill
+     * @ORM\OneToMany(targetEntity="OC\PlatformBundle\Entity\AdvertSkill", mappedBy="advert")
+     */
+    private $advertskills;
+
     public function __construct()
     {
         $this->date         = new \DateTime();
         $this->categories   = new ArrayCollection();
         $this->applications = new ArrayCollection();
+        $this->advertskills = new ArrayCollection();
     }
 
 
@@ -379,7 +386,7 @@ class Advert
     /**
      * Set nbApplications
      *
-     * @param integer $nbApplications
+     * @param int $nbApplications
      *
      * @return Advert
      */
@@ -393,7 +400,7 @@ class Advert
     /**
      * Get nbApplications
      *
-     * @return integer
+     * @return int
      */
     public function getNbApplications()
     {
@@ -422,5 +429,29 @@ class Advert
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     *
+     * @return Advert
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 }

@@ -4,10 +4,10 @@
 
 namespace OC\PlatformBundle\Controller;
 
-use OC\PlatformBundle\Entity\Advert;
-use OC\PlatformBundle\Entity\Image;
-use OC\PlatformBundle\Entity\AdvertSkill;
-use OC\PlatformBundle\Entity\Application;
+// use OC\PlatformBundle\Entity\Advert;
+// use OC\PlatformBundle\Entity\Image;
+// use OC\PlatformBundle\Entity\AdvertSkill;
+// use OC\PlatformBundle\Entity\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -21,28 +21,24 @@ class AdvertController extends Controller
 
         }
 
-        $listAdverts = array(
-      array(
-        'title'   => 'Recherche développpeur Symfony',
-        'id'      => 1,
-        'author'  => 'Loïc',
-        'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
-        'date'    => new \DateTime()),
-      array(
-        'title'   => 'Mission de webmaster',
-        'id'      => 2,
-        'author'  => 'Hugo',
-        'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
-        'date'    => new \DateTime()),
-      array(
-        'title'   => 'Offre de stage webdesigner',
-        'id'      => 3,
-        'author'  => 'Mathieu',
-        'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
-        'date'    => new \DateTime())
-    );
+        $nbPerPage = 3;
 
-        return $this->render('OCPlatformBundle:Advert:index.html.twig', ['listAdverts' => $listAdverts]);
+        $em = $this->getDoctrine()->getManager();
+        $listAdverts = $em->getRepository('OCPlatformBundle:Advert')
+                            ->getAdverts($page, $nbPerPage);
+
+        // Number of page:
+        $nbPages = ceil(count($listAdverts)/ $nbPerPage);
+
+        if ($page > $nbPages) {
+            throw new NotFoundHttpException('Page "' . $page . '" inexistante.');
+        }
+
+
+        return $this->render('OCPlatformBundle:Advert:index.html.twig', ['listAdverts' => $listAdverts,
+         'nbPages'     => $nbPages,
+         'page'        => $page
+        ]);
     }
 
     public function viewAction($id, $slug)
@@ -79,62 +75,6 @@ class AdvertController extends Controller
         // Get the EntityManager
         $em = $this->getDoctrine()->getManager();
 
-        // Create Advert Entity
-        $advert = new Advert();
-        $advert->setTitle('Recherche développeur Symfony.');
-        $advert->setAuthor('Loïc');
-        $advert->setContent('Nous cherchons un développeur Symfony débutant sur Lyon. Etc...');
-        $advert->setEmail('lgallay@orange.fr');
-
-        // Create Image Entity
-        $image = new Image();
-        $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
-        $image->setAlt('Job de rêve');
-
-        $advert->setImage($image);
-
-        // Create Application Entities
-        $application1 = new Application();
-        $application1->setAuthor('Laura');
-        $application1->setContent('J\'ai toutes les qualités requises.');
-
-        $application2 = new Application();
-        $application2->setAuthor('Pierre');
-        $application2->setContent('Je suis très motivé.');
-
-        // Link applications to advert
-        $application1->setAdvert($advert);
-        $application2->setAdvert($advert);
-
-        // Retrieve all skill in database
-        $listSkills = $em->getRepository('OCPlatformBundle:Skill')
-                         ->findAll();
-
-        // For each skill
-        foreach ($listSkills as $skill) {
-            // Create relation between an advert and a skill
-            $advertSkill = new AdvertSkill();
-            // Link to an advert
-            $advertSkill->setAdvert($advert);
-            // link to a skill
-            $advertSkill->setSkill($skill);
-
-            $advertSkill->setLevel('Expert');
-
-            $em->persist($advertSkill);
-        }
-
-
-
-
-        # Step 1: persist the Entities
-        $em->persist($advert);
-        $em->persist($application1);
-        $em->persist($application2);
-
-        ## Step 2: flush
-        $em->flush();
-
         // If method POST
         if ($request->isMethod('POST')) {
             $request->getSession()
@@ -144,7 +84,7 @@ class AdvertController extends Controller
             return $this->redirectToRoute('oc_platform_view', ['id' => $advert->getId()]);
         }
         // Display form
-        return $this->render('OCPlatformBundle:Advert:add.html.twig', array('advert' => $advert));
+        return $this->render('OCPlatformBundle:Advert:add.html.twig');
 
     }
 
@@ -160,16 +100,10 @@ class AdvertController extends Controller
             throw new NotFoundHttpException('L\'annonce d\'id ' . $id . ' n\'existe pas.');
         }
 
-        // Retrieve all the categories in the database
-        $listCategories = $em->getRepository('OCPlatformBundle:Category')
-                           ->findAll();
-
-        // Link categories to advert
-        foreach ($listCategories as $category) {
-            $advert->addCategory($category);
+        if ($request->isMethod('POST')) {
+            $request->getSession()->getFlashBag()->add('notice', 'L\'annonce a été modifiée');
+            return $this->redirectToRoute('OCPlatformBundle:Advert:view.html.twig');
         }
-
-        $em->flush();
 
         return $this->render('OCPlatformBundle:Advert:edit.html.twig', ['advert' => $advert]);
     }
@@ -200,21 +134,11 @@ class AdvertController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $listAdverts = $em->getRepository('OCPlatformBundle:Advert')
-                            ->findAll();
-        // $listAdverts = array(
-        //     array(
-        //         'id'    => 2,
-        //         'title' => 'Recherche développeur Symfony'
-        //     ),
-        //     array(
-        //         'id'    => 5,
-        //         'title' => 'Mission de webmaster'
-        //     ),
-        //     array(
-        //         'id'    => 9,
-        //         'title' => 'Offre de stage webdesigner'
-        //     )
-        // );
+                            ->findBy(
+                                array(),
+                                array('date' => 'desc'),
+                                $limit
+                            );
 
         return $this->render('OCPlatformBundle:Advert:menu.html.twig', ['listAdverts' => $listAdverts]);
     }
