@@ -4,10 +4,12 @@
 
 namespace OC\PlatformBundle\Controller;
 
-// use OC\PlatformBundle\Entity\Advert;
 // use OC\PlatformBundle\Entity\Image;
 // use OC\PlatformBundle\Entity\AdvertSkill;
 // use OC\PlatformBundle\Entity\Application;
+use OC\PlatformBundle\Entity\Advert;
+use OC\PlatformBundle\Form\AdvertType;
+use OC\PlatformBundle\Form\AdvertEditType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -72,19 +74,36 @@ class AdvertController extends Controller
 
     public function addAction(Request $request)
     {
-        // Get the EntityManager
-        $em = $this->getDoctrine()->getManager();
+        // Create an Advert object
+        $advert = new Advert();
+
+        // Create FormBuilder from the form factory service
+        $form = $this->createForm(AdvertType::class, $advert);
 
         // If method POST
         if ($request->isMethod('POST')) {
-            $request->getSession()
-                    ->getFlashBag()
-                    ->add('notice', 'Annonce enregistrée.');
-            // redirect to the advert view
-            return $this->redirectToRoute('oc_platform_view', ['id' => $advert->getId()]);
+            // Now we link $request and $form, from now on $advert has the values from the form.
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+
+                // Get the EntityManager
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($advert);
+                $em->flush();
+
+                $request->getSession()
+                        ->getFlashBag()
+                        ->add('notice', 'Annonce enregistrée');
+
+                return $this->redirectToRoute('oc_platform_view', [
+                    'id'   => $advert->getId(),
+                    'slug' => $advert->getSlug()
+                ]
+            );
+            }
         }
-        // Display form
-        return $this->render('OCPlatformBundle:Advert:add.html.twig');
+        // If form is not valid
+        return $this->render('OCPlatformBundle:Advert:add.html.twig', ['form' => $form->createView()]);
 
     }
 
@@ -100,15 +119,30 @@ class AdvertController extends Controller
             throw new NotFoundHttpException('L\'annonce d\'id ' . $id . ' n\'existe pas.');
         }
 
+        $form = $this->createForm(AdvertEditType::class, $advert);
+
         if ($request->isMethod('POST')) {
+
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                // No need to persist, Doctrine already knows the entity
+                $em->flush();
+            }
             $request->getSession()->getFlashBag()->add('notice', 'L\'annonce a été modifiée');
-            return $this->redirectToRoute('OCPlatformBundle:Advert:view.html.twig');
+            return $this->redirectToRoute('oc_platform_view', [
+                'id' => $advert->getId(),
+                'slug' => $advert->getSlug()
+            ]);
         }
 
-        return $this->render('OCPlatformBundle:Advert:edit.html.twig', ['advert' => $advert]);
+        return $this->render('OCPlatformBundle:Advert:edit.html.twig', [
+            'advert' => $advert,
+            'form'   => $form->createView()
+        ]);
     }
 
-    public function deleteAction($id)
+    public function deleteAction($id, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -120,14 +154,22 @@ class AdvertController extends Controller
              throw new NotFoundHttpException('L\'annonce d\'id ' . $id . ' n\'existe pas.');
          }
 
-        //  Remove category
-        foreach ($advert->getCategories() as $category) {
-            $advert->removeCategory($category);
-        }
+         $form = $this->get('form.factory')->create();
 
-        $em->flush();
+         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+             $em->remove($advert);
+             $em->flush();
 
-        return $this->render('OCPlatformBundle:Advert:delete.html.twig');
+             $request->getSession()->getFlashBag()->add('notice', 'L\'annonce a été supprimée');
+
+             return $this->redirectToRoute('oc_platform_home');
+         }
+
+        return $this->render('OCPlatformBundle:Advert:delete.html.twig',
+    [
+        'advert' => $advert,
+        'form'   => $form->createView()
+    ]);
     }
 
     public function menuAction($limit)

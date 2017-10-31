@@ -5,10 +5,15 @@
 {% endblock %}
 
 {% block ocplatform_body %}
+    {% for notice in app.session.flashbag.get('notice') %}
+        <div class="alert alert-info">
+            <p class="text-center">Message flash: {{ notice }}</p>
+        </div>
+    {% endfor %}
     <div class="row">
         <div class="col-md-4">
             {% if advert.image is not null %}
-            <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}" class="img img-responsive">
+            <img src="{{ asset(advert.image.webPath) }}" alt="{{ advert.image.alt }}" class="img img-responsive">
             {% endif %}
         </div>
         <div class="col-md-8">
