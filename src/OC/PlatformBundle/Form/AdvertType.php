@@ -13,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+// use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AdvertType extends AbstractType
@@ -25,11 +25,11 @@ class AdvertType extends AbstractType
     {
         // $pattern = 'D%';
 
-        $builder->add('date',      DateType::class)
-                ->add('title',     TextType::class)
-                ->add('author',    TextType::class)
-                ->add('email',     EmailType::class)
-                ->add('content',   TextareaType::class)
+        $builder->add('date',        DateType::class)
+                ->add('title',       TextType::class)
+                ->add('author',      TextType::class)
+                ->add('email',       EmailType::class)
+                ->add('content',     CkeditorType::class)
                 ->add('categories',  EntityType::class,
                 [
                     'class'        => 'OCPlatformBundle:Category',

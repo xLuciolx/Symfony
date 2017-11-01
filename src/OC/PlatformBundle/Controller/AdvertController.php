@@ -4,12 +4,12 @@
 
 namespace OC\PlatformBundle\Controller;
 
-// use OC\PlatformBundle\Entity\Image;
-// use OC\PlatformBundle\Entity\AdvertSkill;
-// use OC\PlatformBundle\Entity\Application;
 use OC\PlatformBundle\Entity\Advert;
+use OC\PlatformBundle\Event\PlatformEvents;
+use OC\PlatformBundle\Event\MessagePostEvent;
 use OC\PlatformBundle\Form\AdvertType;
 use OC\PlatformBundle\Form\AdvertEditType;
+// use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -71,13 +71,18 @@ class AdvertController extends Controller
         );
     }
 
-
+    /**
+     *
+     * @param Request $request
+     */
     public function addAction(Request $request)
     {
+        $user = $request->getUser();
         // Create an Advert object
         $advert = new Advert();
+        $advert->setUser($this->getUser());
 
-        // Create FormBuilder from the form factory service
+        // Create FormBuilder from the form factory  service
         $form = $this->createForm(AdvertType::class, $advert);
 
         // If method POST
@@ -85,6 +90,14 @@ class AdvertController extends Controller
             // Now we link $request and $form, from now on $advert has the values from the form.
             $form->handleRequest($request);
             if ($form->isValid()) {
+
+                // Create the events
+                $event = new MessagePostEvent($advert->getContent(), $advert->getUser());
+
+                // Trigger the event
+                $this->get('event_dispatcher')->dispatch(PlatformEvents::POST_MESSAGE, $event);
+
+                $advert->setContent($event->getMessage());
 
                 // Get the EntityManager
                 $em = $this->getDoctrine()->getManager();

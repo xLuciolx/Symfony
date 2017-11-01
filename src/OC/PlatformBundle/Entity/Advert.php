@@ -5,6 +5,7 @@ namespace OC\PlatformBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use OC\UserBundle\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -118,6 +119,13 @@ class Advert
      * @ORM\OneToMany(targetEntity="OC\PlatformBundle\Entity\AdvertSkill", mappedBy="advert")
      */
     private $advertskills;
+
+    /**
+     * @var User
+     * @ORM\ManyToOne(targetEntity="OC\UserBundle\Entity\User")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
 
     public function __construct()
     {

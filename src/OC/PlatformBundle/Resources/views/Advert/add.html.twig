@@ -11,3 +11,8 @@
     Attention : cette annonce sera ajoutée directement sur la page d'accueil après validation du formulaire.
     </p>
 {% endblock %}
+
+{% block javascripts %}
+    {{parent()}}
+    <script src="https://cdn.ckeditor.com/4.7.3/full/ckeditor.js"></script>
+{% endblock %}
