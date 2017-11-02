@@ -9,7 +9,7 @@ use OC\UserBundle\Entity\User;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-// use OC\PlatformBundle\Validator\Antiflood;
+use OC\PlatformBundle\Validator\Antiflood;
 
 /**
  * Advert
@@ -59,6 +59,7 @@ class Advert
      *
      * @ORM\Column(name="content", type="text")
      * @Assert\NotBlank()
+     * @Antiflood()
      */
     private $content;
 
@@ -518,29 +519,5 @@ class Advert
                     ->atPath('content')
                     ->addViolation();
         }
-    }
-
-    /**
-     * Set user
-     *
-     * @param \OC\UserBundle\Entity\User $user
-     *
-     * @return Advert
-     */
-    public function setUser(\OC\UserBundle\Entity\User $user)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * Get user
-     *
-     * @return \OC\UserBundle\Entity\User
-     */
-    public function getUser()
-    {
-        return $this->user;
     }
 }

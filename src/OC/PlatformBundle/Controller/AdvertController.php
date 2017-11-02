@@ -10,8 +10,10 @@ use OC\PlatformBundle\Event\MessagePostEvent;
 use OC\PlatformBundle\Form\AdvertType;
 use OC\PlatformBundle\Form\AdvertEditType;
 // use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AdvertController extends Controller
@@ -43,17 +45,17 @@ class AdvertController extends Controller
         ]);
     }
 
-    public function viewAction($id, $slug)
+    public function viewAction(Advert $advert)
     {
         $em = $this->getDoctrine()->getManager();
-
-        $advert = $em->getRepository('OCPlatformBundle:Advert')
-                     ->find($id);
-
-        //Check if the Entity exist
-        if ($advert === null) {
-            throw new NotFoundHttpException('L\'annonce d\'id ' .$id . ' n\'existe pas');
-        }
+        //
+        // $advert = $em->getRepository('OCPlatformBundle:Advert')
+        //              ->find($id);
+        //
+        // //Check if the Entity exist
+        // if ($advert === null) {
+        //     throw new NotFoundHttpException('L\'annonce d\'id ' .$id . ' n\'existe pas');
+        // }
 
         $listApplication = $em->getRepository('OCPlatformBundle:Application')
             ->findBy(array('advert' => $advert));
@@ -196,5 +198,21 @@ class AdvertController extends Controller
                             );
 
         return $this->render('OCPlatformBundle:Advert:menu.html.twig', ['listAdverts' => $listAdverts]);
+    }
+
+    public function translationAction($name)
+    {
+        return $this->render('OCPlatformBundle:Advert:translation.html.twig', [
+            'name' => $name
+        ]);
+    }
+
+    /**
+     * @ParamConverter("json")
+     * @param mixed $json
+     */
+    public function ParamConverterAction($json)
+    {
+        return new Response(print_r($json, true));
     }
 }
