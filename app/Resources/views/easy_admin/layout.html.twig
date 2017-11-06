@@ -1,29 +1,17 @@
-{% extends 'OCPlatformBundle::layout.html.twig' %}
+{% extends '@EasyAdmin/default/layout.html.twig' %}
 
-{% block stylesheet %}
+{% block head_stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css">
 {% endblock %}
 
-{% block title %}Ajouter une annonce - {{ parent() }}{% endblock %}
-
-{% block ocplatform_body %}
-    <h2>Ajouter une annonce</h2>
-
-    {% include 'OCPlatformBundle:Advert:form.html.twig'%}
-
-    <p>
-    Attention : cette annonce sera ajoutée directement sur la page d'accueil après validation du formulaire.
-    </p>
-{% endblock %}
-
-{% block javascripts %}
+{% block body_javascript %}
     {{parent()}}
     <script src="https://cdn.ckeditor.com/4.7.3/standard/ckeditor.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" charset="utf-8"></script>
     <script type="text/javascript">
         $( document ).ready(function() {
-            $('#oc_platformbundle_advert_image_file').addClass('dropify');
+            $('#advert_image_file').addClass('dropify');
             $('.dropify').dropify();
         });
     </script>

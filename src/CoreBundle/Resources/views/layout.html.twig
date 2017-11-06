@@ -9,6 +9,8 @@
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
             <link rel="stylesheet" href="{{ asset_url }}" type="text/css" />
         {% endstylesheets %}
+        {% block stylesheet %}
+        {% endblock %}
 
     </head>
     <body>
@@ -18,11 +20,25 @@
                 <p>Ce projet est propulsé par Symfony, et construit grâce au MOOC OpenClassrooms et SensioLabs.</p>
                 <p><a href="https://openclassrooms.com/courses/developpez-votre-site-web-avec-le-framework-symfony" class="btn btn-primary btn-lg">Participez au MOOC</a></p>
             </div>
-            <nav class="navbar navbar-default">{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                    Connecté en tant que {{ app.user.username }} - <a href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
-                    {% else %}
-                        <a href="{{ path('fos_user_security_login')}}">Connexion</a>
-                {% endif %}</nav>
+            <nav class="navbar navbar-default">
+                    <ul>
+                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                        <li>
+                            Connecté en tant que {{ app.user.username }} - <a href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
+                        </li>
+                            {% if is_granted("ROLE_ADMIN") %}
+                                <li>
+                                    <a href="{{ path('easyadmin') }}">Administration</a>
+                                </li>
+                            {% endif %}
+                        {% else %}
+                            <li>
+                                <a href="{{ path('fos_user_security_login')}}">Connexion</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+
             <div class="row">
                 <div id="menu" class="col-md-3">
                     <h3>Navigation</h3>

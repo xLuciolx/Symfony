@@ -1,0 +1,65 @@
+# EasyAdmin configuration
+easy_admin:
+    site_name: 'OCPlatform'
+    design:
+        form_theme: 'vertical'
+        menu:
+            - { label: 'Accueil', route: 'core_homepage'}
+            - {label: 'Administration'}
+            - { entity: 'Advert', label: 'Annonce'}
+            - { entity: 'AdvertSkill', label: 'AdvertSkill'}
+            - { entity: 'Application', label: 'Candidature'}
+            - { entity: 'Category', label: 'Categories'}
+            # - { entity: 'Image', label: 'Image'}
+            - { entity: 'Skill', label: 'Compétences'}
+            - { entity: 'User', label: 'Utilisateur'}
+    entities:
+        Advert:
+            class: OC\PlatformBundle\Entity\Advert
+            list:
+                fields:
+                    - id
+                    - { property: 'date', label: 'Créée le'}
+                    - { property: 'title', label: 'Titre'}
+                    - { property: 'author', label: 'Auteur'}
+                    - { property: 'published', label: 'Publiée'}
+                    - { property: 'updateAt', label: 'Modifiée le'}
+            form:
+                fields:
+                    - { property: 'date', type: 'datetime', type_options: { input: datetime }}
+                    - { property: 'title', label: 'Titre'}
+                    - { property: 'author', label: 'Auteur'}
+                    - { property: 'email', type: 'email', label: 'Mail'}
+                    - { property: 'content', type: 'OC\PlatformBundle\Form\CkeditorType', label: 'Contenu'}
+                    - { property: 'categories', type: entity, type_options: {class: 'OC\PlatformBundle\Entity\Category', choice_label: 'name', multiple: true, expanded: true}, label: 'Catégories'}
+                    - { property: 'image', type: 'OC\PlatformBundle\Form\ImageType'}
+                    - { property: 'published', type: 'checkbox', label: 'Publiée'}
+            edit:
+                fields:
+                    - '-date'
+            new:
+                fields:
+                    - { property: 'user', label: 'Utilisateur' }
+
+        AdvertSkill:
+            class: OC\PlatformBundle\Entity\AdvertSkill
+            form:
+                fields:
+                    - { property: 'advert', type: entity, type_options: {class: 'OC\PlatformBundle\Entity\Advert', choice_label: 'title'}, label: 'Annonce'}
+                    - { property: 'skill', type: entity, type_options: {class: 'OC\PlatformBundle\Entity\Skill', choice_label: 'name'}, label: 'Compétence'}
+                    - { property: 'level', type: choice, type_options: {choices: {'Débutant':'Débutant', 'Confirmé': 'Confirmé', 'Expert': 'Expert'}}, label: 'Niveau'}
+        Application:
+            class: OC\PlatformBundle\Entity\Application
+            form:
+                fields:
+                    - { property: 'advert', type: entity, type_options: {class: 'OC\PlatformBundle\Entity\Advert', choice_label: 'title'}, label: 'Annonce'}
+                    - { property: 'author', label: 'Auteur'}
+                    - { property: 'content', type: 'OC\PlatformBundle\Form\CkeditorType', label: 'Contenu'}
+        Category:
+            class: OC\PlatformBundle\Entity\Category
+        Image:
+            class: OC\PlatformBundle\Entity\Image
+        Skill:
+            class: OC\PlatformBundle\Entity\Skill
+        User:
+            class: OC\UserBundle\Entity\User
