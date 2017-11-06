@@ -93,3 +93,14 @@ fos_user:
 assetic:
   debug:          '%kernel.debug%'
   use_controller: '%kernel.debug%'
+
+# EasyAdmin configuration
+easy_admin:
+    entities:
+        Advert:
+            class: OC\PlatformBundle\Entity\Advert
+            form:
+                fields:
+                    - { property: 'date', type: 'datetime', label: 'Date' }
+                    - { property: 'title', type: 'text', label: 'Titre' }
+                    - { property: 'image', type: 'OC\PlatformBundle\Form\ImageType', label: 'Contenu' }

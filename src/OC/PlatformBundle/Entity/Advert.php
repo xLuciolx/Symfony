@@ -33,7 +33,7 @@ class Advert
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date", type="datetime")
+     * @ORM\Column(name="date", type="string", length=255)
      * @Assert\DateTime()
      */
     private $date;
@@ -128,7 +128,7 @@ class Advert
 
     public function __construct()
     {
-        $this->date         = new \DateTime();
+        $this->date         =( new \DateTime())->format('Y-m-d H:i:s');
         $this->categories   = new ArrayCollection();
         $this->applications = new ArrayCollection();
         $this->advertskills = new ArrayCollection();

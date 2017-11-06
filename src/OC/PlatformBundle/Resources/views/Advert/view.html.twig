@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block ocplatform_body %}
+{{ dump(advert.date)}}
     {% for notice in app.session.flashbag.get('notice') %}
         <div class="alert alert-info">
             <p class="text-center">Message flash: {{ notice }}</p>

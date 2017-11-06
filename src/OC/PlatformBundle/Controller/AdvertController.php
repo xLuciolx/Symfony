@@ -82,6 +82,7 @@ class AdvertController extends Controller
         $user = $request->getUser();
         // Create an Advert object
         $advert = new Advert();
+        $advert->setDate(new \DateTime());
         $advert->setUser($this->getUser());
 
         // Create FormBuilder from the form factory  service
@@ -92,6 +93,9 @@ class AdvertController extends Controller
             // Now we link $request and $form, from now on $advert has the values from the form.
             $form->handleRequest($request);
             if ($form->isValid()) {
+                // $date = $advert->getDate();
+                // $date = $date->format('Y-m-d H:i:s');
+                // $advert->setDate($date);
 
                 // Create the events
                 $event = new MessagePostEvent($advert->getContent(), $advert->getUser());
