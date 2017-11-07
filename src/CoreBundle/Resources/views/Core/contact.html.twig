@@ -1,0 +1,47 @@
+{% extends 'CoreBundle::layout.html.twig' %}
+
+{% block title %}Contact - {{ parent() }}{% endblock %}
+
+{% block body %}
+
+    <div class="col-md-10 col-md-offset-1">
+        {{ form_start(form, {'attr': {'class': 'form-horizontal'}})}}
+            <div class="form-group">
+                {{ form_label(form.name, 'Nom')}}
+                <div class="input-group">
+                    <div class="input-group-addon"><span class="glyphicon glyphicon-user"></span></div>
+                    {{ form_widget(form.name)}}
+                </div>
+            </div>
+
+            <div  class="form-group">
+                {{ form_label(form.email) }}
+                <div class="input-group">
+                    <div class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></div>
+                    {{ form_widget(form.email) }}
+                </div>
+            </div>
+
+            <div  class="form-group">
+                {{ form_label(form.subject, 'Sujet')}}
+                <div class="input-group">
+                    <div class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></div>
+                    {{ form_widget(form.subject)}}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.content, 'Votre message') }}
+                {{ form_widget(form.content) }}
+            </div>
+
+            {{ form_widget(form.Envoyer, {'attr': {'class': 'btn btn-primary center-block'}})}}
+        {{ form_end(form)}}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.ckeditor.com/4.7.3/standard/ckeditor.js"></script>
+{% endblock %}

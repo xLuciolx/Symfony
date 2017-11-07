@@ -73,7 +73,11 @@ swiftmailer:
     host: '%mailer_host%'
     username: '%mailer_user%'
     password: '%mailer_password%'
+    delivery_addresses:
+        - '%mailer_address%'
     spool: { type: memory }
+    port: 465
+    encryption: ssl
 
 # Stof\DoctrineExtensionBundle configuration
 stof_doctrine_extensions:

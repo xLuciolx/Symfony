@@ -21,37 +21,44 @@
                 <p><a href="https://openclassrooms.com/courses/developpez-votre-site-web-avec-le-framework-symfony" class="btn btn-primary btn-lg">Participez au MOOC</a></p>
             </div>
             <nav class="navbar navbar-default">
-                    <ul>
+                <div class="container-fluid">
+                    <ul class="nav navbar-nav navbar-left nav-pills">
+                        <li class="navbar-btn"><a href="{{ path('core_homepage') }}">Accueil</a></li>
                         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                        <li>
-                            Connecté en tant que {{ app.user.username }} - <a href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
-                        </li>
                             {% if is_granted("ROLE_ADMIN") %}
-                                <li>
-                                    <a href="{{ path('easyadmin') }}">Administration</a>
-                                </li>
+                            <li class="navbar-btn">
+                                <a href="{{ path('easyadmin') }}">Administration</a>
+                            </li>
                             {% endif %}
                         {% else %}
-                            <li>
-                                <a href="{{ path('fos_user_security_login')}}">Connexion</a>
-                            </li>
+                        <li class="navbar-btn"><a href="{{ path('fos_user_security_login') }}">Connexion</a></li>
+                        <li class="navbar-btn"><a href="{{ path('fos_user_registration_register') }}">Créer un compte</a>
+                        </li>
                         {% endif %}
                     </ul>
-                </nav>
+                    <ul class="nav navbar-nav navbar-right nav-pills">
+                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                        <li class="navbar-btn">
+                            <p class="navbar-text">Connecté en tant que <a href="{{ path('fos_user_profile_show') }}" class="navbar-link">{{ app.user.username }}</a></p>
+                        </li>
+                        <li class="navbar-btn">
+                            <a href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
+                        </li>
+                        {% endif %}
+                        <li class="navbar-btn"><a href="{{ path('core_contact') }}">Contact</a></li>
+                    </ul>
+                </div>
+
+            </nav>
 
             <div class="row">
                 <div id="menu" class="col-md-3">
-                    <h3>Navigation</h3>
-                    <ul class="nav nav-pills nav-stacked">
-                        <li><a href="{{ path('core_homepage') }}">Accueil</a></li>
-                        <li><a href="{{ path('core_contact') }}">Contact</a></li>
-                    </ul>
                     <h3>Les annonces</h3>
                     <ul class="nav nav-pills nav-stacked">
                         <li><a href="{{ path('oc_platform_home') }}">Accueil</a></li>
-                        {#{% if is_granted('ROLE_AUTEUR') %}#}
+                        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                             <li><a href="{{ path('oc_platform_add') }}">Ajouter une annonce</a></li>
-                        {#{% endif %}#}
+                        {% endif %}
                     </ul>
 
                     <h3>Les dernières annonces</h3>

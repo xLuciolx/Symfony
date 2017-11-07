@@ -1,4 +1,4 @@
-{% extends 'CoreBundle::layout.html.twig' %}
+{% extends 'OCPlatformBundle::layout.html.twig' %}
 
 {% block body %}
     {% for key, messages in app.session.flashbag.all() %}
@@ -8,6 +8,6 @@
             </div>
         {% endfor %}
     {% endfor %}
-    {% block fos_user_content %}
-    {% endblock fos_user_content%}
+        {% block fos_user_content %}
+        {% endblock fos_user_content%}
 {% endblock %}
